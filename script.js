@@ -1,0 +1,316 @@
+let currentPage = 1;
+const totalPages = 8;
+let musicPlaying = false;
+const bgMusic = document.getElementById('bgMusic');
+const musicToggle = document.getElementById('musicToggle');
+
+function nextPage() {
+    if (currentPage < totalPages) {
+        document.getElementById(`page${currentPage}`).classList.remove('active');
+        currentPage++;
+        document.getElementById(`page${currentPage}`).classList.add('active');
+        playTransitionSound();
+
+        // Auto-play special song INSTANTLY when reaching page 8
+        if (currentPage === 8) {
+            playSpecialSong();
+        }
+    }
+}
+
+function prevPage() {
+    if (currentPage > 1) {
+        document.getElementById(`page${currentPage}`).classList.remove('active');
+        currentPage--;
+        document.getElementById(`page${currentPage}`).classList.add('active');
+        playTransitionSound();
+    }
+}
+
+function playTransitionSound() {
+    // Create a simple wind chime sound using Web Audio API
+    const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+    const oscillator = audioContext.createOscillator();
+    const gainNode = audioContext.createGain();
+
+    oscillator.connect(gainNode);
+    gainNode.connect(audioContext.destination);
+
+    oscillator.frequency.setValueAtTime(800, audioContext.currentTime);
+    oscillator.frequency.exponentialRampToValueAtTime(400, audioContext.currentTime + 0.5);
+
+    gainNode.gain.setValueAtTime(0.1, audioContext.currentTime);
+    gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.5);
+
+    oscillator.start(audioContext.currentTime);
+    oscillator.stop(audioContext.currentTime + 0.5);
+}
+
+function toggleMusic() {
+    if (musicPlaying) {
+        bgMusic.pause();
+        musicToggle.textContent = '🔊';
+    } else {
+        bgMusic.play();
+        musicToggle.textContent = '🔇';
+    }
+    musicPlaying = !musicPlaying;
+}
+
+// Cursor trail
+let trailElements = [];
+document.addEventListener('mousemove', (e) => {
+    const trail = document.createElement('div');
+    trail.className = 'cursor-trail';
+    trail.textContent = Math.random() > 0.5 ? '💕' : '✨';
+    trail.style.left = e.clientX + 'px';
+    trail.style.top = e.clientY + 'px';
+    document.body.appendChild(trail);
+
+    trailElements.push(trail);
+
+    // Remove old trails
+    if (trailElements.length > 20) {
+        const oldTrail = trailElements.shift();
+        oldTrail.remove();
+    }
+
+    setTimeout(() => {
+        trail.remove();
+    }, 500);
+});
+
+// Sound permission handling - simplified (no popup)
+let soundEnabled = false;
+
+// Auto-enable sound on first user interaction
+document.addEventListener('click', () => {
+    if (!soundEnabled) {
+        soundEnabled = true;
+        console.log('Sound enabled on first click!');
+    }
+}, { once: true }); // Only trigger once
+
+// Initialize first page
+document.addEventListener('DOMContentLoaded', () => {
+    document.getElementById('page1').classList.add('active');
+    createFloatingElements();
+});
+
+function createFloatingElements() {
+    // Floating hearts for page 2
+    const floatingHeartsContainer = document.querySelector('.floating-hearts');
+    for (let i = 0; i < 10; i++) {
+        const heart = document.createElement('div');
+        heart.className = 'floating-heart';
+        heart.textContent = '💕';
+        heart.style.left = Math.random() * 100 + '%';
+        heart.style.animationDelay = Math.random() * 5 + 's';
+        floatingHeartsContainer.appendChild(heart);
+    }
+
+    // Sparkles for page 1
+    const sparklesContainer = document.querySelector('.sparkles');
+    for (let i = 0; i < 20; i++) {
+        const sparkle = document.createElement('div');
+        sparkle.className = 'sparkle';
+        sparkle.textContent = '✨';
+        sparkle.style.left = Math.random() * 100 + '%';
+        sparkle.style.top = Math.random() * 100 + '%';
+        sparkle.style.animationDelay = Math.random() * 2 + 's';
+        sparklesContainer.appendChild(sparkle);
+    }
+
+    // Sparkle rain for page 4
+    const sparkleRainContainer = document.querySelector('.sparkle-rain');
+    for (let i = 0; i < 15; i++) {
+        const sparkle = document.createElement('div');
+        sparkle.className = 'sparkle';
+        sparkle.textContent = '✨';
+        sparkle.style.left = Math.random() * 100 + '%';
+        sparkle.style.animationDelay = Math.random() * 3 + 's';
+        sparkleRainContainer.appendChild(sparkle);
+    }
+
+    // Floating petals for page 5
+    const floatingPetalsContainer = document.querySelector('.floating-petals');
+    for (let i = 0; i < 12; i++) {
+        const petal = document.createElement('div');
+        petal.className = 'floating-petal';
+        petal.textContent = '🌸';
+        petal.style.left = Math.random() * 100 + '%';
+        petal.style.animationDelay = Math.random() * 4 + 's';
+        floatingPetalsContainer.appendChild(petal);
+    }
+
+    // Rising hearts for page 7
+    const risingHeartsContainer = document.querySelector('.rising-hearts');
+    for (let i = 0; i < 8; i++) {
+        const heart = document.createElement('div');
+        heart.className = 'rising-heart';
+        heart.textContent = '💕';
+        heart.style.left = Math.random() * 100 + '%';
+        heart.style.animationDelay = Math.random() * 6 + 's';
+        risingHeartsContainer.appendChild(heart);
+    }
+
+    // Proposal sparkles for page 8
+    const proposalSparklesContainer = document.querySelector('.proposal-sparkles');
+    for (let i = 0; i < 15; i++) {
+        const sparkle = document.createElement('div');
+        sparkle.className = 'proposal-sparkle';
+        sparkle.textContent = '✨';
+        sparkle.style.left = Math.random() * 100 + '%';
+        sparkle.style.top = Math.random() * 100 + '%';
+        sparkle.style.animationDelay = Math.random() * 2 + 's';
+        proposalSparklesContainer.appendChild(sparkle);
+    }
+
+    // Floating rings for page 8
+    const floatingRingsContainer = document.querySelector('.floating-rings');
+    for (let i = 0; i < 5; i++) {
+        const ring = document.createElement('div');
+        ring.className = 'floating-ring';
+        ring.textContent = '💍';
+        ring.style.left = Math.random() * 100 + '%';
+        ring.style.animationDelay = Math.random() * 4 + 's';
+        floatingRingsContainer.appendChild(ring);
+    }
+}
+
+function showHiddenNote() {
+    document.getElementById('hiddenNote').classList.add('show');
+}
+
+function hideHiddenNote() {
+    document.getElementById('hiddenNote').classList.remove('show');
+}
+
+// Keyboard navigation
+document.addEventListener('keydown', (e) => {
+    if (e.key === 'ArrowRight' || e.key === ' ') {
+        nextPage();
+    } else if (e.key === 'ArrowLeft') {
+        prevPage();
+    }
+});
+
+// Parallax scrolling effect
+window.addEventListener('scroll', () => {
+    const scrolled = window.pageYOffset;
+    const rate = scrolled * -0.5;
+
+    document.querySelectorAll('.background-gradient').forEach(bg => {
+        bg.style.transform = `translateY(${rate}px)`;
+    });
+});
+
+function triggerHeartBlast() {
+    const heartParticles = document.getElementById('heart-particles');
+    const photoPopup = document.getElementById('photo-popup');
+
+    // Create heart particles explosion
+    for (let i = 0; i < 30; i++) {
+        const particle = document.createElement('div');
+        particle.className = 'heart-particle';
+        particle.textContent = Math.random() > 0.5 ? '💕' : '💖';
+        particle.style.left = Math.random() * 100 + 'vw';
+        particle.style.top = Math.random() * 100 + 'vh';
+        particle.style.fontSize = Math.random() * 2 + 1 + 'rem';
+        particle.style.animationDelay = Math.random() * 0.5 + 's';
+        heartParticles.appendChild(particle);
+
+        // Remove particle after animation
+        setTimeout(() => {
+            particle.remove();
+        }, 2000);
+    }
+
+    // Show text popup after a short delay
+    setTimeout(() => {
+        photoPopup.classList.add('show');
+        playSpecialSong();
+    }, 500);
+
+    // Hide popup after 8 seconds (longer for song)
+    setTimeout(() => {
+        photoPopup.classList.remove('show');
+    }, 8500);
+}
+
+function playSpecialSong() {
+    if (!soundEnabled) {
+        console.log('Sound not enabled yet, showing permission popup');
+        soundPopup.style.display = 'flex';
+        return;
+    }
+
+    const specialSong = document.getElementById('specialSong');
+    const bgMusic = document.getElementById('bgMusic');
+
+    // Pause background music if playing
+    if (!bgMusic.paused) {
+        bgMusic.pause();
+    }
+
+    // Play the special song INSTANTLY now that sound is enabled
+    specialSong.muted = false;
+    specialSong.volume = 1.0; // Full volume for maximum impact
+    specialSong.currentTime = 0;
+
+    const playPromise = specialSong.play();
+
+    if (playPromise !== undefined) {
+        playPromise.then(() => {
+            console.log('Naam Tera song playing INSTANTLY!');
+        }).catch(error => {
+            console.log('Playback failed:', error);
+            showPlayButton();
+        });
+    }
+
+    // Resume background music after special song ends
+    specialSong.onended = function() {
+        console.log('Naam Tera song ended');
+        if (musicPlaying) {
+            bgMusic.play();
+        }
+        hidePlayButton();
+    };
+}
+
+function showPlayButton() {
+    let playBtn = document.getElementById('manualPlayBtn');
+    if (!playBtn) {
+        playBtn = document.createElement('button');
+        playBtn.id = 'manualPlayBtn';
+        playBtn.innerHTML = '🎵 Allow Audio & Play Song<br><small>(Click to enable music)</small>';
+        playBtn.style.position = 'fixed';
+        playBtn.style.top = '50%';
+        playBtn.style.left = '50%';
+        playBtn.style.transform = 'translate(-50%, -50%)';
+        playBtn.style.zIndex = '1000';
+        playBtn.style.padding = '15px 25px';
+        playBtn.style.fontSize = '16px';
+        playBtn.style.textAlign = 'center';
+        playBtn.style.lineHeight = '1.4';
+        playBtn.style.borderRadius = '10px';
+        playBtn.style.background = 'linear-gradient(45deg, #ff6b9d, #c44569)';
+        playBtn.style.color = 'white';
+        playBtn.style.border = 'none';
+        playBtn.style.cursor = 'pointer';
+        playBtn.onclick = () => {
+            playSpecialSong();
+            hidePlayButton();
+        };
+        document.body.appendChild(playBtn);
+    }
+    playBtn.style.display = 'block';
+}
+
+function hidePlayButton() {
+    const playBtn = document.getElementById('manualPlayBtn');
+    if (playBtn) {
+        playBtn.style.display = 'none';
+    }
+}
